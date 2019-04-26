@@ -1,0 +1,190 @@
+<#macro lcgPage page>
+
+<div id="pp" class="easyui-pagination" style="border-bottom: #00a2ca solid 1px" data-options="
+					total:${page.totalCount},
+					layout:[
+					'list',
+					'sep',
+					'first',
+					'prev',
+					'links',
+					'next',
+					'last',
+					'sep',
+					'info']
+				"></div>
+<script type="text/javascript">
+    jQuery.extend({
+        myPage:function(url,id,formid){
+
+            //分页工具条的初始化
+            $('#pp').pagination({
+                onSelectPage:function(pageNumber, pageSize){
+                    var form={};
+                    if(formid!=null&&formid!=""){
+                         form=$.formJson(formid);
+					}
+                    form.pageNo=pageNumber;
+                    form.pageSize=pageSize;
+                    $.ajax({
+                        type:"POST",
+                        url:url,
+                        data:form,
+                        dataType:"JSON",
+                        success:function(msg){
+                            //重新加载页面的数据
+                            $('#'+id).datagrid('loadData', msg.resultList);
+                        },error:function(error){
+                            $.messager.alert('错误','出错了 ^_^ !','info');
+                        }
+                    })
+                }
+            });
+        },
+		//批删数据
+        delAll:function(tableid,urlid,pageurl,formid){
+            var opts = $("#"+tableid).datagrid('getChecked');
+            var ids="";
+            for (var i = 0; i < opts.length; i++) {
+                alert(JSON.stringify(opts[i].uid))
+                ids+=","+opts[i].uid
+            }
+            ids=ids.substring(1)
+            if(confirm("是否删除"+ids+"的数据")){
+                $.ajax({
+                    type:'POST',
+                    url:urlid,
+                    data:{ids:ids},
+                    dataType:'text',
+                    success:function (msg) {
+                        if(msg == 'ok'){
+                            $.messager.alert("提示","删除成功","info",function () {
+                                $.submitForm(pageurl,formid,tableid)
+                            })
+                        }
+                    }
+                })
+            }
+        },
+		//将表单数据转为JSON对象
+		formJson:function(formid){
+             var form1={};
+             var arrs=$("#"+formid).serializeArray();
+             $.each(arrs,function(i,item){
+                 form1[item.name]=item.value;
+			 })
+			return form1;
+		},
+        //带有文件上传的表单的提交
+        formDataJson:function(formid){
+
+           /* var v = document.querySelector("input[type=file]").files[0];
+            var reader = new FileReader();
+            reader.readAsDataURL(v);
+            reader.onload = function(e){
+                //alert(e.target.result);
+
+            };*/
+            var form1={};
+            var arrs=$("#"+formid).serializeArray();
+            $.each(arrs,function(i,item){
+                form1[item.name]=item.value;
+            })
+			alert(form1);
+			return form1;
+        },
+		//提交表单
+		submitForm:function(url,formid,tableId){
+            var form={};
+            if(formid!=null&&formid!=""){
+                form=$.formJson(formid);
+            }
+            $.ajax({
+                type:"POST",
+                url:url,
+                data:form,
+                dataType:"JSON",
+                success:function(msg){
+                    //重新加载页面的数据
+                    $('#'+tableId).datagrid('loadData', msg.resultList);
+                    //刷新分页栏的信息
+                    $('#pp').pagination('refresh',{	// 改变选项并刷新分页栏信息
+                        total:msg.totalCount,
+                    });
+
+                }
+            })
+
+		},
+		//日期框的格式化
+		dateFormat:function(format,dateboxId){
+            $('#'+dateboxId).datebox({
+                formatter:function(date){
+                    var y = date.getFullYear();
+                    var m = date.getMonth()+1;
+                    var d = date.getDate();
+                    var h = date.getHours();
+                    var mi= date.getMinutes();
+                    var ss= date.getSeconds();
+                    if(m<10){
+                        m="0"+m;
+                    }
+                    if(d<10){
+                        d="0"+d;
+                    }
+                    if(h<10){
+                        h="0"+h;
+                    }
+                    if(ss<10){
+                        ss="0"+ss;
+                    }
+                    if(mi<10){
+                        mi="0"+mi;
+                    }
+                    if(format=="y-m-d"){
+                        return ""+y+"-"+m+"-"+d;
+                    }
+                    if(format=='y-m-d-h-mi-ss'){
+                        return y+'-'+m+'-'+d+" "+h+":"+mi+":"+ss;
+                    }
+                },
+                parser: function (s) {
+                    if (!s) return new Date();
+                    var ese=s.split(" ");
+                    var ymd=""+ese[0];
+                    var yStr = ymd.substr(0, 4);
+                    var mStr = ymd.substr(5, ymd.lastIndexOf("-") - ymd.indexOf("-") - 1);
+                    var dStr = ymd.substr(ymd.lastIndexOf("-") + 1, ymd.length - ymd.lastIndexOf("-") - 1);
+                    var hStr="";
+                    var miStr="";
+                    var ssStr="";
+                    var h="";
+                    var mi="";
+                    var ss="";
+                    if(ese.length > 1){
+                        var hmiss=""+ese[1];
+                        hStr = hmiss.substr(0,2);
+                        miStr = hmiss.substr(3, hmiss.lastIndexOf(":") - hmiss.indexOf(":") - 1);
+                        ssStr = hmiss.substr(hmiss.lastIndexOf(":") + 1, hmiss.length - hmiss.lastIndexOf("-") - 1);
+                        h = parseInt(hStr, 10);
+                        mi = parseInt(miStr, 10);
+                        ss = parseInt(ssStr, 10);
+                    }
+                    var y = parseInt(yStr, 10);
+                    var m = parseInt(mStr, 10);
+                    var d = parseInt(dStr, 10);
+
+                    if (h!="") {
+                        return new Date(y, m - 1, d,h,mi,ss);
+                    }else if(!isNaN(y) && !isNaN(m) && !isNaN(d)){
+                        return new Date(y, m - 1, d);
+                    }
+                    else {
+                        return new Date();
+                    }
+                }
+        	});
+        }
+    })
+</script>
+</#macro>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.qms.dao.QmsNcrDao">
+    
+	<sql id="qmsNcrColumns">
+		a.qdr_id AS "qdrId",
+		a.ncr_code AS "ncrCode",
+		a.customer_name AS "customerName",
+		a.device_no AS "deviceNo",
+		a.lot_no AS "lotNo",
+		a.issue_dept AS "issueDept",
+		a.response_dept AS "responseDept",
+		a.total_qty AS "totalQty",
+		a.sample_qty AS "sampleQty",
+		a.machine_no AS "machineNo",
+		a.defective_count AS "defectiveCount",
+		a.qcuser_id AS "qcuserId",
+		a.abiuser_id AS "abiuserId",
+		a.abnormal_date AS "abnormalDate",
+		a.pro_disposition_mtd AS "proDispositionMtd",
+		a.pro_fill_pid AS "proFillPid",
+		a.pro_fill_time AS "proFillTime",
+		a.rea_an_pid AS "reaAnPid",
+		a.rea_an_time AS "reaAnTime",
+		a.cor_ac AS "corAc",
+		a.cor_ac_pid AS "corAcPid",
+		a.cor_ac_time AS "corAcTime",
+		a.dcr_re_id AS "dcrReId",
+		a.xg_qdr_id AS "xgQdrId",
+		a.qdr_code AS "qdrCode",
+		a.flag AS "flag",
+		a.find_data AS "findData",
+		a.done_data AS "doneData",
+		a.status AS "status"
+	</sql>
+	
+	<sql id="qmsNcrJoins">
+	</sql>
+    
+	<select id="get" resultType="QmsNcr">
+		SELECT 
+			<include refid="qmsNcrColumns"/>
+		FROM qms_ncr a
+		<include refid="qmsNcrJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	<select id="List" resultType="QmsNcr">
+		SELECT 
+			<include refid="qmsNcrColumns"/>
+		FROM qms_ncr a
+		<include refid="qmsNcrJoins"/>
+		<where>
+			
+			<if test="customerName != null and customerName != ''">
+				AND a.customer_name = #{customerName}
+			</if>
+			<if test="deviceNo != null and deviceNo != ''">
+				AND a.device_no = #{deviceNo}
+			</if>
+			<if test="lotNo != null and lotNo != ''">
+				AND a.lot_no = #{lotNo}
+			</if>
+			<if test="issueDept != null and issueDept != ''">
+				AND a.issue_dept = #{issueDept}
+			</if>
+			<if test="responseDept != null and responseDept != ''">
+				AND a.response_dept = #{responseDept}
+			</if>
+			<if test="findData != null and findData != ''">
+				AND a.find_data = #{findData}
+			</if>
+			<if test="doneData != null and doneData != ''">
+				AND a.done_data = #{doneData}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="QmsNcr">
+		SELECT 
+			<include refid="qmsNcrColumns"/>
+		FROM qms_ncr a
+		<include refid="qmsNcrJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO qms_ncr(
+			qdr_id,
+			ncr_code,
+			customer_name,
+			device_no,
+			lot_no,
+			issue_dept,
+			response_dept,
+			total_qty,
+			sample_qty,
+			machine_no,
+			defective_count,
+			qcuser_id,
+			abiuser_id,
+			abnormal_date,
+			pro_disposition_mtd,
+			pro_fill_pid,
+			pro_fill_time,
+			rea_an_pid,
+			rea_an_time,
+			cor_ac,
+			cor_ac_pid,
+			cor_ac_time,
+			dcr_re_id,
+			xg_qdr_id,
+			qdr_code,
+			flag,
+			find_data,
+			done_data,
+			status
+		) VALUES (
+			#{qdrId},
+			#{ncrCode},
+			#{customerName},
+			#{deviceNo},
+			#{lotNo},
+			#{issueDept},
+			#{responseDept},
+			#{totalQty},
+			#{sampleQty},
+			#{machineNo},
+			#{defectiveCount},
+			#{qcuserId},
+			#{abiuserId},
+			#{abnormalDate},
+			#{proDispositionMtd},
+			#{proFillPid},
+			#{proFillTime},
+			#{reaAnPid},
+			#{reaAnTime},
+			#{corAc},
+			#{corAcPid},
+			#{corAcTime},
+			#{dcrReId},
+			#{xgQdrId},
+			#{qdrCode},
+			#{flag},
+			#{findData},
+			#{doneData},
+			#{status}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE qms_ncr SET 	
+			qdr_id = #{qdrId},
+			ncr_code = #{ncrCode},
+			customer_name = #{customerName},
+			device_no = #{deviceNo},
+			lot_no = #{lotNo},
+			issue_dept = #{issueDept},
+			response_dept = #{responseDept},
+			total_qty = #{totalQty},
+			sample_qty = #{sampleQty},
+			machine_no = #{machineNo},
+			defective_count = #{defectiveCount},
+			qcuser_id = #{qcuserId},
+			abiuser_id = #{abiuserId},
+			abnormal_date = #{abnormalDate},
+			pro_disposition_mtd = #{proDispositionMtd},
+			pro_fill_pid = #{proFillPid},
+			pro_fill_time = #{proFillTime},
+			rea_an_pid = #{reaAnPid},
+			rea_an_time = #{reaAnTime},
+			cor_ac = #{corAc},
+			cor_ac_pid = #{corAcPid},
+			cor_ac_time = #{corAcTime},
+			dcr_re_id = #{dcrReId},
+			xg_qdr_id = #{xgQdrId},
+			qdr_code = #{qdrCode},
+			flag = #{flag},
+			find_data = #{findData},
+			done_data = #{doneData},
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM qms_ncr
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getFindList" resultType="QmsNcr">
+	     SELECT 
+			<include refid="qmsNcrColumns"/>
+		FROM qms_ncr a
+		<include refid="qmsNcrJoins"/>
+		<where>
+			
+			<if test="customerName != null and customerName != ''">
+				AND a.customer_name = #{customerName}
+			</if>
+			<if test="deviceNo != null and deviceNo != ''">
+				AND a.device_no = #{deviceNo}
+			</if>
+			<if test="lotNo != null and lotNo != ''">
+				AND a.lot_no = #{lotNo}
+			</if>
+			<if test="issueDept != null and issueDept != ''">
+				AND a.issue_dept = #{issueDept}
+			</if>
+			<if test="responseDept != null and responseDept != ''">
+				AND a.response_dept = #{responseDept}
+			</if>
+			<if test="findData != null and findData != ''">
+				AND a.find_data = #{findData}
+			</if>
+			<if test="doneData != null and doneData != ''">
+				AND a.done_data = #{doneData}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>  
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
